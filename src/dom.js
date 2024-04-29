@@ -12,6 +12,8 @@ console.log("hello, let's go"); // just to check it is running
 
 console.log(newHashMap.hash("Soren")); // find the array for me to check later
 newHashMap.set("Soren", "Soren is bad ass") // add key-value pair to the hash
+newHashMap.set("SorenB", "Soren is still bad ass") // add key-value pair to the hash
+newHashMap.set("SorenC", "Soren is very bad ass") // add key-value pair to the hash
 
 console.log(newHashMap.buckets[15]); // retrieve the bucket were we just wrote Soren to - should return an object
 console.log("Who's a baddass?");
@@ -20,6 +22,14 @@ console.log("Can you find Soren?");
 console.log(newHashMap.has("Soren"));
 console.log("Can you find Richie?");
 console.log(newHashMap.has("Richie"));
+console.log("how long are you?");
+console.log(newHashMap.length());
+console.log("give me the keys");
+console.log(newHashMap.keys())
+console.log("now we clear you and get length again");
+newHashMap.clear();
+console.log(newHashMap.length());
+;
 
 
 

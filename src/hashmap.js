@@ -110,7 +110,56 @@ export default class HashMap {
         }
         return false; // Key not found
     }
+
+    // length() returns the number of stored keys in the hash map.
+
+    length() {
+        // Guess I need to traverse the whole array/entire bucket and all the LinkedLists pr bucket
+        let numberOfKeys = 0;
+        for (let i = 0; i < this.buckets.length; i++) {
+            const bucketLinkedList = this.buckets[i];
+            let currentNode = bucketLinkedList.head;
+            while(currentNode!== null) {
+                if(currentNode.value && currentNode.value.key !== null) {
+                    numberOfKeys++; 
+                }
+            
+            currentNode = currentNode.nextNode;
+            }
+        }
+        return numberOfKeys;
+    }
+
+    // clear() removes all entries in the hash map.
+    clear() {
+        // Remove the reference --> i.e. set the head to null again?
+
+        for (let i = 0; i < this.buckets.length; i++) {
+            this.buckets[i] = new LinkedList();
+        }
+    }
+
+    // keys() returns an array containing all the keys inside the hash map.
+    keys() {
+        const array = [];
+        let arrayIndex = 0;
+
+        for (let i = 0; i < this.buckets.length; i++) {
+            const bucketLinkedList = this.buckets[i];
+            let currentNode = bucketLinkedList.head;
+            while(currentNode!== null) {
+                if(currentNode.value && currentNode.value.key !== null) {
+                    array[arrayIndex] = currentNode.value.key
+                    arrayIndex++;
+                }
+            
+            currentNode = currentNode.nextNode;
+            }
+        }
+        return array;
+    }
 }
+
 
 /* TODO
 
@@ -126,6 +175,8 @@ En hash map:
     1: Tager et key value pair
     2: Produceser en hash code
     3: gemmer pair i en bucket
+
+    4: Remember the load factor....
 
 
 */
