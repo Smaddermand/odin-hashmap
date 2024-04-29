@@ -1,11 +1,17 @@
 // hashmap.js
 
+
+/* NOTE: There is still an issue with the increaseHashMapSize function.. I think.. */
+
 // eslint-disable-next-line no-unused-vars
 import LinkedList from "./linkedlist";
 
 export default class HashMap {
     constructor(){
-        this.buckets = new Array(16).fill(null).map(() => new LinkedList());
+        this.hashMapSize = 16;
+        this.entryCount = 0;
+        this.buckets = new Array(this.hashMapSize).fill(null).map(() => new LinkedList());
+
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -16,8 +22,41 @@ export default class HashMap {
         for (let i = 0; i < key.length; i++) {
             hashCode = primeNumber * hashCode + key.charCodeAt(i);
             }
-        hashCode %= 16;
+        hashCode %= this.hashMapSize;
         return hashCode;
+    }
+
+    // calculate loadFactor
+    loadFactorToHigh() {
+        console.log("Load factor calculated");
+        if(this.entryCount > 0.75 * this.hashMapSize) {
+            return true
+        } 
+            return false
+    }
+
+    // increase bucket count
+    increaseHashMapSize(){
+
+        const tempBucket = this.buckets; // store a copy
+        this.hashMapSize *= 2; // increase the hashMapSize
+        this.clear(); // clear the bucket
+
+        
+        for(let i = 0; i < tempBucket.length; i++ ) {
+            const bucketLinkedList = tempBucket[i];
+            let currentNode = bucketLinkedList.head;
+            while(currentNode!== null) {
+                if(currentNode.value && currentNode.value.key !== null) {
+                    this.set(currentNode.value.key, currentNode.value.value);
+                }
+            
+            currentNode = currentNode.nextNode;
+
+            
+        }
+        console.log("I increased hashMapSize");
+        }
     }
 
     // set(key, value) takes two arguments, the first is a key and the second is a value that is assigned to this key.
@@ -27,6 +66,11 @@ export default class HashMap {
         if (index < 0 || index >= this.buckets.length) {
             throw new Error("Trying to access index out of bound");
           }
+
+        if(this.loadFactorToHigh() === true) { // if load factor to high then increase hashmap size
+            this.increaseHashMapSize();
+            console.log(`The size of the hash map is now ${this.hashMapSize}`);
+        }
 
         // check if a linkedList exists at the bucket index
 
@@ -46,6 +90,7 @@ export default class HashMap {
 
         // if key is not found, append new node with key-value pair
         bucketLinkedList.append({ key, value})
+        this.entryCount++; // add, to keep count of entries
     }
 
     // get(key) takes one argument as a key and returns the value that is assigned to this key. If a key is not found, return null.
@@ -65,7 +110,7 @@ export default class HashMap {
             currentNode = currentNode.nextNode;
         }
         return null; // return null if not found
-    }
+    };
 
     // has(key) takes a key as an argument and returns true or false based on whether or not the key is in the hash map
     has(key) {
@@ -93,6 +138,7 @@ export default class HashMap {
         // Special case: the head node is the one to be removed
         if (currentNode !== null && currentNode.value.key === key) {
             bucketLinkedList.head = currentNode.nextNode; // move the head to the next node
+            this.entryCount--;
             return true;
         }
         
@@ -103,6 +149,7 @@ export default class HashMap {
         while(currentNode !== null) {
             if(currentNode.value.key === key) {
                 previousNode.nextNode = currentNode.nextNode
+                this.entryCount--;
                 return true;
             }
             previousNode = currentNode;
@@ -134,8 +181,9 @@ export default class HashMap {
     clear() {
         // Remove the reference --> i.e. set the head to null again?
 
-        for (let i = 0; i < this.buckets.length; i++) {
+        for (let i = 0; i < this.hashMapSize; i++) {
             this.buckets[i] = new LinkedList();
+            this.entryCount = 0;
         }
     }
 
@@ -157,6 +205,45 @@ export default class HashMap {
             }
         }
         return array;
+    }
+
+    // values() returns an array containing all the values.
+    values() {
+        const array = [];
+        let arrayIndex = 0;
+
+        for (let i = 0; i < this.buckets.length; i++) {
+            const bucketLinkedList = this.buckets[i];
+            let currentNode = bucketLinkedList.head;
+            while(currentNode!== null) {
+                if(currentNode.value && currentNode.value.key !== null) {
+                    array[arrayIndex] = currentNode.value.value
+                    arrayIndex++;
+                }
+            
+            currentNode = currentNode.nextNode;
+            }
+        }
+        return array;
+    }
+
+    // entries() returns an array that contains each key, value pair. Example: [[firstKey, firstValue], [secondKey, secondValue]]
+
+    entries () {
+        const array = [];
+        
+        for (let i = 0; i < this.buckets.length; i++) {
+            const bucketLinkedList = this.buckets[i];
+            let currentNode = bucketLinkedList.head;
+            while(currentNode!== null) {
+                if(currentNode.value && currentNode.value.key !== null) {
+                    array.push([currentNode.value.key, currentNode.value.value])
+                }
+            
+            currentNode = currentNode.nextNode;
+            }
+        }
+        return array; 
     }
 }
 
