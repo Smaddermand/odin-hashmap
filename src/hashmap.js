@@ -20,6 +20,7 @@ export default class HashMap {
         return hashCode;
     }
 
+    // set(key, value) takes two arguments, the first is a key and the second is a value that is assigned to this key.
     set(key, value) {
         const index = this.hash(key); // hashCode now has a value of 0 to 15 corresponding to the array index
 
@@ -45,8 +46,39 @@ export default class HashMap {
 
         // if key is not found, append new node with key-value pair
         bucketLinkedList.append({ key, value})
-          
-        
+    }
+
+    // get(key) takes one argument as a key and returns the value that is assigned to this key. If a key is not found, return null.
+    get(key) {
+        // get the index / hashCode for the key
+        const index = this.hash(key);
+
+        // retrieve the LinkedList at index
+        const bucketLinkedList = this.buckets[index];
+
+        // find the key/value
+        let currentNode = bucketLinkedList.head;
+        while (currentNode !== null) {
+            if(currentNode.value.key === key) {
+                return currentNode.value.value
+            } 
+            currentNode = currentNode.nextNode;
+        }
+        return null; // return null if not found
+    }
+
+    // has(key) takes a key as an argument and returns true or false based on whether or not the key is in the hash map
+    has(key) {
+        const index = this.hash(key);
+        const bucketLinkedList = this.buckets[index];
+        let currentNode = bucketLinkedList.head;
+        while(currentNode !== null) {
+            if(currentNode.value.key === key) {
+                return true
+            }
+            currentNode = currentNode.nextNode;
+        }
+        return false;
 
     }
 }
