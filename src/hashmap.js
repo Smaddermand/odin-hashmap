@@ -81,6 +81,35 @@ export default class HashMap {
         return false;
 
     }
+
+    // remove(key) takes a key as an argument. If the given key is in the hash map, it should remove the entry with that key and return true. 
+    // If the key isn’t in the hash map, it should return false.
+
+    remove(key) {
+        const index = this.hash(key);
+        const bucketLinkedList = this.buckets[index];
+        let currentNode = bucketLinkedList.head;
+        
+        // Special case: the head node is the one to be removed
+        if (currentNode !== null && currentNode.value.key === key) {
+            bucketLinkedList.head = currentNode.nextNode; // move the head to the next node
+            return true;
+        }
+        
+        
+        // General case: the node to remove is not the head
+        let previousNode = null;
+        
+        while(currentNode !== null) {
+            if(currentNode.value.key === key) {
+                previousNode.nextNode = currentNode.nextNode
+                return true;
+            }
+            previousNode = currentNode;
+            currentNode = currentNode.nextNode;
+        }
+        return false; // Key not found
+    }
 }
 
 /* TODO
